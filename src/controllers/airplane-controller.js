@@ -107,7 +107,7 @@ async function deleteAirplane (req, res) {
 }
 
 /*
-PUT: airplanes/:id
+PATCH airplanes/:id
 req-body {}
 */
 async function updateAirplane(req, res) {

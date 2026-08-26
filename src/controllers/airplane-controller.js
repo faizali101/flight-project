@@ -29,7 +29,7 @@ async function createAirplanes(req, res) {
     }
 }
 
-async function getAirplanes(req, res) {
+async function getAirplanes (req, res) {
     try {
         const airplanes = await AirplaneService.getAirplanes();
         return res
@@ -52,7 +52,35 @@ async function getAirplanes(req, res) {
     }
 }
 
+/*
+POST : airplanes/:id
+req-body {}
+*/
+async function getAirplane(req, res) {
+    try {
+        const airplane = await AirplaneService.getAirplane(req.params.id);
+        return res
+            .status(StatusCodes.OK)
+            .json({
+                success: true,
+                message: 'Successfully fetched the Airplane.',
+                data: airplane,
+                error: {},
+            });
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({
+                success: false,
+                message: 'Something went wrong while fetching the Airplane.',
+                data: {},
+                error: error.message,
+            });
+    }
+}
+
 module.exports = {
     createAirplanes,
     getAirplanes,
+    getAirplane
 };

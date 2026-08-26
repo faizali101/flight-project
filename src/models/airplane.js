@@ -20,3 +20,6 @@ module.exports = (sequelize, DataTypes) => {
   });
   return Airplane;
 };
+
+
+//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

@@ -1,5 +1,6 @@
 const { AirplaneRepository } = require('../repositories');
-const { StatusCodes } = require('http-status-codes')
+const { StatusCodes } = require('http-status-codes');
+const { AppError } = require('../utils');
 const airplaneRepository = new AirplaneRepository();
 
 async function createAirplanes(data) {
@@ -24,19 +25,43 @@ async function getAirplanes(){
 async function getAirplane(id) {
     try {
         const airplane = await airplaneRepository.get(id);
-        if (!airplane) {
-            const error = new Error('The airplane you requested does not exist');
-            error.statusCode = 404;
-            throw error;
-        }
         return airplane;
     } catch (error) {
-        throw error;
+        if(error.StatusCodes === StatusCodes.NOT_FOUND) {
+            throw new AppError('The Airplane you requested is not present.',error.StatusCodes.NOT_FOUND);
+        }
+        throw new AppError('Cannot fetch data of all the Airplanes.', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function deleteAirplane(id) {
+    try {
+        const response = await airplaneRepository.destroy(id);
+        return response;
+    } catch (error) {
+        if(error.statusCode === StatusCodes.NOT_FOUND) {  
+            throw new AppError('The Airplane you want to delete is not present.', StatusCodes.NOT_FOUND);
+        }
+        throw new AppError('Cannot delete the Airplane.', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function updateAirplane(id, data) {
+    try {
+        const response = await airplaneRepository.update(id, data);
+        return response;
+    } catch (error) {
+        if(error.statusCode === StatusCodes.NOT_FOUND) {  
+            throw new AppError('The Airplane you want to update is not present.', StatusCodes.NOT_FOUND);
+        }
+        throw new AppError('Cannot update this airplane.', StatusCodes.INTERNAL_SERVER_ERROR);
     }
 }
 
 module.exports = {
     createAirplanes,
     getAirplanes,
-    getAirplane
+    getAirplane,
+    deleteAirplane,
+    updateAirplane
 };

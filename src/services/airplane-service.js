@@ -1,10 +1,11 @@
 const { AirplaneRepository } = require('../repositories');
-const { StatusCodes } = require('http-status-codes')
+const { StatusCodes } = require('http-status-codes');
+const { AppError } = require('../utils');
+
 const airplaneRepository = new AirplaneRepository();
 
 async function createAirplanes(data) {
     try {
-        console.log('inide services');
         const airplane = await airplaneRepository.create(data);
         return airplane;
     } catch (error) {
@@ -12,12 +13,12 @@ async function createAirplanes(data) {
     }
 }
 
-async function getAirplanes(){
+async function getAirplanes() {
     try {
-        const airplanes = await airplaneRepository.getAll();  
+        const airplanes = await airplaneRepository.getAll();
         return airplanes;
     } catch (error) {
-        throw error;  
+        throw error;
     }
 }
 
@@ -25,9 +26,7 @@ async function getAirplane(id) {
     try {
         const airplane = await airplaneRepository.get(id);
         if (!airplane) {
-            const error = new Error('The airplane you requested does not exist');
-            error.statusCode = 404;
-            throw error;
+            throw new AppError('The Airplane you requested is not present.', StatusCodes.NOT_FOUND);
         }
         return airplane;
     } catch (error) {
@@ -35,8 +34,28 @@ async function getAirplane(id) {
     }
 }
 
+async function deleteAirplane(id) {
+    try {
+        const response = await airplaneRepository.destroy(id);
+        return response;
+    } catch (error) {
+        throw new AppError('Cannot delete the Airplane.', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
+async function updateAirplane(id, data) {
+    try {
+        const response = await airplaneRepository.update(id, data);
+        return response;
+    } catch (error) {
+        throw new AppError('Cannot update this airplane.', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     createAirplanes,
     getAirplanes,
-    getAirplane
+    getAirplane,
+    deleteAirplane,
+    updateAirplane,
 };

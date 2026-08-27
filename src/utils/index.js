@@ -1,3 +1,6 @@
+// utils/index.js
 module.exports = {
-    AppError : require('./errors/new-error')
-}
+    AppError: require('./errors'),
+    SuccessResponse: require('./success-response'),
+    ErrorResponse: require('./error-response'),
+};

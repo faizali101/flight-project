@@ -5,6 +5,11 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class airports extends Model {
     static associate(models) {
+      this.belongsTo(models.city, {
+        foreignKey : 'cityId',
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE'
+      })
     }
   }
   airports.init({

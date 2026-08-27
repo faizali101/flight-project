@@ -13,9 +13,13 @@ module.exports = (sequelize, DataTypes) => {
     });
     this.belongsTo(models.airports, {
         foreignKey: 'code'
-    })
-  }
-}
+    });
+    this.hasMany(models.Seat, {
+    foreignKey: 'flightId',
+    onDelete: 'CASCADE'
+    });
+   }
+ }
   Flight.init({
     flightNumber: {
       type : DataTypes.STRING,

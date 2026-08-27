@@ -42,5 +42,7 @@ class CrudRepository {
             });
         return response; } 
     }
+
+    
 module.exports = CrudRepository;
 

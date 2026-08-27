@@ -13,5 +13,7 @@ router.post(
 // /api/v1/cities DELETE 
 router.delete('/cities/:id', cityController.deleteCity);
 
+// /api/v1/cities/:id PATCH
+router.patch('/cities/:id', cityController.updateCity);
 
 module.exports = router

@@ -33,16 +33,37 @@ async function deleteCity(req, res) {
     try {
         const city = await cityServices.deleteCity(req.params.id);
         return res.status(StatusCodes.OK).json({
-            success: true,
+            ...SuccessResponse,
             message: 'Successfully deleted the City.',
             data: city,
-            error: {},
         });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-            success: false,
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+            ...ErrorResponse,
             message: 'Something went wrong while deleting the City.',
-            data: {},
+            error: error.message,
+        });
+    }
+}
+
+/*
+PATCH cities/:id
+req-body {}
+*/
+async function updateCity(req, res) {
+    try {
+        const city = await cityServices.updateCity(req.params.id, {
+            name: req.body.name,
+        });
+        return res.status(StatusCodes.OK).json({
+            ...SuccessResponse,
+            message: 'Successfully updated the City.',
+            data: city,
+        });
+    } catch (error) {
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+            ...ErrorResponse,
+            message: 'Something went wrong while updating the City.',
             error: error.message,
         });
     }
@@ -50,5 +71,6 @@ async function deleteCity(req, res) {
 
 module.exports = {
     createCity,
-    deleteCity
+    deleteCity,
+    updateCity,
 };

@@ -1,4 +1,4 @@
-const { cityService } = require('../services');
+const { cityServices } = require('../services');
 const { StatusCodes } = require('http-status-codes');
 const { SuccessResponse, ErrorResponse } = require('../utils');
 
@@ -8,7 +8,7 @@ req-body {name : STRING}
 */
 async function createCity(req, res) {
     try {
-        const city = await cityService.createCity({
+        const city = await cityServices.createCity({
             name: req.body.name,
         });
         return res.status(StatusCodes.CREATED).json({
@@ -25,6 +25,30 @@ async function createCity(req, res) {
     }
 }
 
+/*
+DELETE : cities/:id
+req-param {}
+*/
+async function deleteCity(req, res) {
+    try {
+        const city = await cityServices.deleteCity(req.params.id);
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully deleted the City.',
+            data: city,
+            error: {},
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Something went wrong while deleting the City.',
+            data: {},
+            error: error.message,
+        });
+    }
+}
+
 module.exports = {
     createCity,
+    deleteCity
 };

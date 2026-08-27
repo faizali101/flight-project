@@ -10,4 +10,8 @@ router.post(
     cityController.createCity
 );
 
+// /api/v1/cities DELETE 
+router.delete('/cities/:id', cityController.deleteCity);
+
+
 module.exports = router

@@ -1,8 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const { AirplaneController } = require('../../controllers');
+const { AirplaneMiddlewares } = require('../../middlewares');
+
 // /api/v1/airplanes POST
-router.post('/airplanes', AirplaneController.createAirplanes);
+router.post('/airplanes', AirplaneMiddlewares.validateCreateRequest, AirplaneController.createAirplanes);
 // /api/v1/airplanes GET
 router.get('/airplanes', AirplaneController.getAirplanes);
 // /api/v1/airplanes/:id GET

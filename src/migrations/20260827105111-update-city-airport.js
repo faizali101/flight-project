@@ -7,10 +7,9 @@ module.exports = {
       type : 'FOREIGN KEY',
       fields : ['cityId'],
       references : {
-        table : 'cities',
+        table : 'Cities',
         field : 'id'
       },
-      onUpdate : 'CASCADE',
       onDelete : 'CASCADE'
     })
   },

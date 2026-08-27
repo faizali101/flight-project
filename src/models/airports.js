@@ -5,13 +5,19 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class airports extends Model {
     static associate(models) {
-      this.belongsTo(models.City, {
-        foreignKey : 'cityId',
-        onDelete: 'CASCADE',
-        onUpdate: 'CASCADE'
-      })
-    }
+    this.belongsTo(models.City, {
+        foreignKey: 'cityId'
+    });
+    this.hasMany(models.Flight, {
+        foreignKey: 'departureAirportID',
+        onDelete: 'CASCADE'
+    });
+    this.hasMany(models.Flight, {
+        foreignKey: 'arrivalAirportID',
+        onDelete: 'CASCADE'
+    });
   }
+}
   airports.init({
     name: {
       type: DataTypes.STRING,

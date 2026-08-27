@@ -68,9 +68,31 @@ async function updateCity(req, res) {
         });
     }
 }
+/*
+GET cities 
+*/
+async function getCities(req, res) {
+    try {
+        const city = await cityServices.getCities();
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully fetched all cities.',
+            data: city,
+            error: {},
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Something went wrong while fetching cities.',
+            data: {},
+            error: error.message,
+        });
+    }
+}
 
 module.exports = {
     createCity,
     deleteCity,
     updateCity,
+    getCities
 };

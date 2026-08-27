@@ -38,10 +38,18 @@ async function updateCity(id, data) {
     }
 }
 
-
+async function getCities() {
+    try {
+        const city = await cityRepository.getAll();
+        return city;
+    } catch (error) {
+        throw error;
+    }
+}
 
 module.exports = {
     createCity,
     deleteCity,
-    updateCity
+    updateCity,
+    getCities
 };

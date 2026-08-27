@@ -5,7 +5,7 @@ const {
 module.exports = (sequelize, DataTypes) => {
   class airports extends Model {
     static associate(models) {
-      this.belongsTo(models.city, {
+      this.belongsTo(models.City, {
         foreignKey : 'cityId',
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE'

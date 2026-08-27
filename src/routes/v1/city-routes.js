@@ -20,3 +20,5 @@ router.patch('/cities/:id', cityController.updateCity);
 router.get('/cities', cityController.getCities);
 
 module.exports = router
+
+

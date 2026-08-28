@@ -51,7 +51,30 @@ async function createFlight(req, res) {
     }
 }
 
+/*
+DELETE : flights/:id
+req-param {}
+*/
+async function deleteFlight(req, res) {
+    try {
+        const flight = await FlightService.deleteFlight(req.params.id);
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully deleted the Flight.',
+            data: flight,
+            error: {},
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Something went wrong while deleting the Flight.',
+            data: {},
+            error: error.message,
+        });
+    }
+}
 
 module.exports = {
-    createFlight
+    createFlight,
+    deleteFlight
 }

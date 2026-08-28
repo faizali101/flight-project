@@ -9,7 +9,14 @@ async function createAirport(data) {
         const airport = await airportRepository.create(data);
         return airport;
     } catch (error) {
-        throw error;
+         if (error.name == 'SequelizeValidationError') {
+            let explantions = [];
+            error.errors.forEach((err) => {
+                explantions.push(err.message);
+            });
+            throw new AppError(explantions, StatusCodes.BAD_REQUEST)
+        }
+        throw new AppError('Cannot create an airport', StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }
 

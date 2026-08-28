@@ -2,7 +2,7 @@ const { StatusCodes } = require('http-status-codes');
 const { AppError, ErrorResponse } = require ('../utils');
 
 function validateCreateRequest(req, res, next) {
-    if (!req.body.modelNumber) {
+    if (!req.body.modelNumber || !req.body.capacity) {
         ErrorResponse.message = 'something went wrong while creating an Airplane.'
         ErrorResponse.error = new AppError('Model Number not found.')
         return res 

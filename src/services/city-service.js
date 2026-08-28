@@ -9,7 +9,14 @@ async function createCity(data) {
         const city = await cityRepository.create(data);
         return city;
     } catch (error) {
-        throw new AppError('Cannot create city.', StatusCodes.INTERNAL_SERVER_ERROR);
+        if (error.name == 'SequelizeValidationError') {
+            let explantions = [];
+            error.errors.forEach((err) => {
+                explantions.push(err.message);
+            });
+            throw new AppError(explantions, StatusCodes.BAD_REQUEST)
+        }
+        throw new AppError('Cannot create a city', StatusCodes.INTERNAL_SERVER_ERROR)
     }
 }
 

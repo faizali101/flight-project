@@ -7,5 +7,6 @@ const { FlightMiddlewares } = require('../../middlewares');
 router.post('/', FlightMiddlewares.validateCreateRequest, FlightController.createFlight);
 // /api/v1/flights DELETE 
 router.delete('/:id', FlightController.deleteFlight);
-
+// /api/v1/flights GET 
+router.get('/', FlightController.getAllFlights)
 module.exports = router;

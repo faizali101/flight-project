@@ -1,6 +1,7 @@
 const { FlightRepository } = require('../repositories');
 const { StatusCodes } = require('http-status-codes');
 const { AppError } = require('../utils');
+const {Op} = require('sequelize');
 
 
 const flightRepository = new FlightRepository();
@@ -30,7 +31,39 @@ async function deleteFlight(id) {
     }
 }
 
+async function getAllFlights(query) {
+    let customFilter = {};
+    if (query && query.trips) {
+        const [departureAirportID, arrivalAirportID] = query.trips.split("-");
+        customFilter.departureAirportID = departureAirportID;
+        customFilter.arrivalAirportID = arrivalAirportID;
+    }
+    if(query.price) {
+       const [minPrice, maxPrice] = query.price.split("-");
+       customFilter.price = {
+        [Op.between] : [minPrice, ((maxPrice == undefined) ? 100000 : maxPrice)]
+       }
+    }
+    if(query.travellers) {
+        customFilter.totalSeats = {
+            [Op.gte] : query.travellers
+        }
+    }
+    if(query.tripDate) {
+        customFilter.departureTime = {
+            [Op.gte] : query.tripDate
+        } 
+    }
+    try {
+        const flights = await flightRepository.getAllFlights(customFilter);
+        return flights;
+    } catch (error) {
+        throw new AppError('Cannot fetch data of all flights.', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     createFlight,
-    deleteFlight
+    deleteFlight,
+    getAllFlights
 };

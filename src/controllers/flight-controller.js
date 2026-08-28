@@ -74,7 +74,27 @@ async function deleteFlight(req, res) {
     }
 }
 
+async function getAllFlights(req, res) {
+    try {
+        const flights = await FlightService.getAllFlights(req.query);
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully fetched all Flights.',
+            data: flights,
+            error: {},
+        });
+    } catch (error) {
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: error.message || 'Something went wrong while fetching Flights.',
+            data: {},
+            error: error.error || {},
+        });
+    }
+}
+
 module.exports = {
     createFlight,
-    deleteFlight
+    deleteFlight,
+    getAllFlights
 }

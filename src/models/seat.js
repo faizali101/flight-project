@@ -1,35 +1,39 @@
 'use strict';
-const { Model } = require('sequelize');
+const {
+  Model
+} = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Seat extends Model {
     static associate(models) {
-      this.belongsTo(models.Flight, {
-        foreignKey: 'flightId'
+      this.belongsTo(models.Airplane, {
+        foreignKey: 'airplaneID'
       });
     }
   }
+
   Seat.init({
-    flightId: {
+    airplaneID: {
       type: DataTypes.INTEGER,
       allowNull: false
     },
-    seatNumber: {
+    row: {
+      type: DataTypes.INTEGER,
+      allowNull: false
+    },
+    col: {
       type: DataTypes.STRING,
       allowNull: false
     },
     class: {
-      type: DataTypes.ENUM('economy', 'business', 'first_class'),
+      type: DataTypes.ENUM('economy', 'business', 'first', 'second'),
       allowNull: false,
       defaultValue: 'economy'
-    },
-    status: {
-      type: DataTypes.ENUM('available', 'booked', 'blocked'),
-      allowNull: false,
-      defaultValue: 'available'
     }
   }, {
     sequelize,
     modelName: 'Seat',
   });
+
   return Seat;
 };

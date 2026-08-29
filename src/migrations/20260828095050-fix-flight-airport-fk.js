@@ -2,10 +2,39 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    // Remove old constraints FIRST, before touching column types
-    await queryInterface.removeConstraint('Flights', 'Flights_ibfk_3');
+    const constraints = await queryInterface.getForeignKeyReferencesForTable('Flights');
+    const hasIbfk3 = constraints.some(c => c.constraintName === 'Flights_ibfk_3');
 
-    // Now safe to change column types
+    if (hasIbfk3) {
+      await queryInterface.removeConstraint('Flights', 'Flights_ibfk_3');
+    }
+
+    await queryInterface.addColumn('Flights', 'departureAirportID_new', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    });
+    await queryInterface.addColumn('Flights', 'arrivalAirportID_new', {
+      type: Sequelize.INTEGER,
+      allowNull: true,
+    });
+
+    await queryInterface.sequelize.query(`
+      UPDATE Flights f
+      JOIN airports a ON a.code = f.departureAirportID
+      SET f.departureAirportID_new = a.id
+    `);
+    await queryInterface.sequelize.query(`
+      UPDATE Flights f
+      JOIN airports a ON a.code = f.arrivalAirportID
+      SET f.arrivalAirportID_new = a.id
+    `);
+
+    await queryInterface.removeColumn('Flights', 'departureAirportID');
+    await queryInterface.removeColumn('Flights', 'arrivalAirportID');
+
+    await queryInterface.renameColumn('Flights', 'departureAirportID_new', 'departureAirportID');
+    await queryInterface.renameColumn('Flights', 'arrivalAirportID_new', 'arrivalAirportID');
+
     await queryInterface.changeColumn('Flights', 'departureAirportID', {
       type: Sequelize.INTEGER,
       allowNull: false,
@@ -15,15 +44,11 @@ module.exports = {
       allowNull: false,
     });
 
-    // Add the corrected constraints
     await queryInterface.addConstraint('Flights', {
       fields: ['departureAirportID'],
       type: 'foreign key',
       name: 'flights_departure_airport_fk',
-      references: {
-        table: 'airports',
-        field: 'id',
-      },
+      references: { table: 'airports', field: 'id' },
       onDelete: 'CASCADE',
     });
 
@@ -31,10 +56,7 @@ module.exports = {
       fields: ['arrivalAirportID'],
       type: 'foreign key',
       name: 'flights_arrival_airport_fk',
-      references: {
-        table: 'airports',
-        field: 'id',
-      },
+      references: { table: 'airports', field: 'id' },
       onDelete: 'CASCADE',
     });
   },
@@ -47,6 +69,7 @@ module.exports = {
       type: Sequelize.STRING,
       allowNull: false,
     });
+
     await queryInterface.changeColumn('Flights', 'arrivalAirportID', {
       type: Sequelize.STRING,
       allowNull: false,

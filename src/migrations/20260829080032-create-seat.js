@@ -1,5 +1,5 @@
 'use strict';
-/** @type {import('sequelize-cli').Migration} */
+
 module.exports = {
   async up(queryInterface, Sequelize) {
     await queryInterface.createTable('Seats', {
@@ -9,28 +9,28 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      flightId: {
+      airplaneID: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Flights', 
+          model: 'Airplanes',
           key: 'id'
         },
+        onUpdate: 'CASCADE',
         onDelete: 'CASCADE'
       },
-      seatNumber: {
+      row: {
+        type: Sequelize.INTEGER,
+        allowNull: false
+      },
+      col: {
         type: Sequelize.STRING,
         allowNull: false
       },
       class: {
-        type: Sequelize.ENUM('economy', 'business', 'first_class'),
+        type: Sequelize.ENUM('economy', 'business', 'first', 'second'),
         allowNull: false,
         defaultValue: 'economy'
-      },
-      status: {
-        type: Sequelize.ENUM('available', 'booked', 'blocked'),
-        allowNull: false,
-        defaultValue: 'available'
       },
       createdAt: {
         allowNull: false,
@@ -43,13 +43,14 @@ module.exports = {
     });
 
     await queryInterface.addConstraint('Seats', {
-      fields: ['flightId', 'seatNumber'],
+      fields: ['airplaneID', 'row', 'col'],
       type: 'unique',
-      name: 'unique_flight_seat_constraint'
+      name: 'unique_airplane_seat_position'
     });
   },
+
   async down(queryInterface, Sequelize) {
-    await queryInterface.removeConstraint('Seats', 'unique_flight_seat_constraint');
+    await queryInterface.removeConstraint('Seats', 'unique_airplane_seat_position');
     await queryInterface.dropTable('Seats');
   }
 };

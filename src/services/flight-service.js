@@ -33,6 +33,7 @@ async function deleteFlight(id) {
 
 async function getAllFlights(query) {
     let customFilter = {};
+    let sortFilter = [];
     if (query && query.trips) {
         const [departureAirportID, arrivalAirportID] = query.trips.split("-");
         customFilter.departureAirportID = departureAirportID;
@@ -54,6 +55,11 @@ async function getAllFlights(query) {
             [Op.gte] : query.tripDate
         } 
     }
+   if (query.sort) {
+        const params = query.sort.split(",");
+        sortFilter = params.map((param) => param.split("_")); 
+    }
+    // console.log(sortFilter);
     try {
         const flights = await flightRepository.getAllFlights(customFilter);
         return flights;
@@ -78,3 +84,4 @@ module.exports = {
     getAllFlights,
     updateFlight
 };
+ 

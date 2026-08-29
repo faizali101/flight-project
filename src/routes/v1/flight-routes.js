@@ -9,4 +9,6 @@ router.post('/', FlightMiddlewares.validateCreateRequest, FlightController.creat
 router.delete('/:id', FlightController.deleteFlight);
 // /api/v1/flights GET 
 router.get('/', FlightController.getAllFlights)
+// /api/v1`/flights PATCH 
+router.patch('/:id', FlightController.updateFlight)
 module.exports = router;

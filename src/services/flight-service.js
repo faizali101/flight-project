@@ -62,8 +62,19 @@ async function getAllFlights(query) {
     }
 }
 
+
+async function updateFlight(id, data) {
+    try {
+        const response = await flightRepository.update(id, data);
+        return response;
+    } catch (error) {
+        throw new AppError('Cannot update this Flight.', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+}
+
 module.exports = {
     createFlight,
     deleteFlight,
-    getAllFlights
+    getAllFlights,
+    updateFlight
 };

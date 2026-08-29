@@ -93,8 +93,42 @@ async function getAllFlights(req, res) {
     }
 }
 
+/*
+PATCH airplanes/:id
+req-body {}
+*/
+async function updateFlight(req, res) {
+    try {
+        const flights = await FlightService.updateFlight(req.params.id, {
+             flightNumber : req.body.flightNumber,
+            airplaneID: req.body.airplaneID,
+            departureAirportID: req.body.departureAirportID,
+            arrivalAirportID: req.body.arrivalAirportID,
+            arrivalTime: req.body.arrivalTime,
+            departureTime: req.body.departureTime,
+            price: req.body.price,
+            boardingGate: req.body.boardingGate,
+            totalSeats : req.body.totalSeats
+        });
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully updated an Flight.',
+            data: flights,
+            error: {},
+        });
+    } catch (error) {
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Something went wrong while updating the Flight.',
+            data: {},
+            error: error.message,
+        });
+    }
+}
+
 module.exports = {
     createFlight,
     deleteFlight,
-    getAllFlights
+    getAllFlights,
+    updateFlight
 }

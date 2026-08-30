@@ -5,10 +5,15 @@ const { FlightMiddlewares } = require('../../middlewares');
 
 // /api/v1/flights POST
 router.post('/', FlightMiddlewares.validateCreateRequest, FlightController.createFlight);
-// /api/v1/flights DELETE 
+// /api/v1/flights/id DELETE 
 router.delete('/:id', FlightController.deleteFlight);
 // /api/v1/flights GET 
 router.get('/', FlightController.getAllFlights)
 // /api/v1`/flights PATCH 
-router.patch('/:id', FlightController.updateFlight)
+// router.patch('/:id', FlightController.updateFlight)
+// /api/v1/flights/id GET 
+router.get('/:id', FlightController.getFlight);
+// /api/v1/flights/:id/seats PATCH 
+router.patch('/:id/seats', FlightMiddlewares.validateUpdateSeatsRequest, FlightController.updateSeats)
+
 module.exports = router;

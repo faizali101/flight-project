@@ -1,14 +1,14 @@
 const { FlightService } = require('../services');
 const { StatusCodes } = require('http-status-codes');
-const {successResponse, errorResponse} = require('../utils');
+const { successResponse, errorResponse, SuccessResponse, ErrorResponse } = require('../utils');
 
 /*
 POST /flights
 req-body {
 flightNumber : 'UK-77',
 airplaneID : (id of airplane),
-departureAirportID : '233',
-arrivalAirportID : '788',
+departureFlightID : '233',
+arrivalFlightID : '788',
 arrivalTime : '7:30 PM',
 departureTime : '4:00 PM',
 price : '$120.00',
@@ -18,9 +18,8 @@ totalSeats : (airplane seats)
 */
 async function createFlight(req, res) {
     try {
-        console.log('inside controller');
         const flight = await FlightService.createFlight({
-            flightNumber : req.body.flightNumber,
+            flightNumber: req.body.flightNumber,
             airplaneID: req.body.airplaneID,
             departureAirportID: req.body.departureAirportID,
             arrivalAirportID: req.body.arrivalAirportID,
@@ -28,11 +27,10 @@ async function createFlight(req, res) {
             departureTime: req.body.departureTime,
             price: req.body.price,
             boardingGate: req.body.boardingGate,
-            totalSeats : req.body.totalSeats
-
+            totalSeats: req.body.totalSeats
         });
         return res
-            .status(StatusCodes.CREATED) 
+            .status(StatusCodes.CREATED)
             .json({
                 success: true,
                 message: 'Successfully created a Flight.',
@@ -41,7 +39,7 @@ async function createFlight(req, res) {
             });
     } catch (error) {
         return res
-            .status(StatusCodes.INTERNAL_SERVER_ERROR)
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
             .json({
                 success: false,
                 message: 'Something went wrong while creating a Flight.',
@@ -65,7 +63,7 @@ async function deleteFlight(req, res) {
             error: {},
         });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Something went wrong while deleting the Flight.',
             data: {},
@@ -94,13 +92,13 @@ async function getAllFlights(req, res) {
 }
 
 /*
-PATCH airplanes/:id
+PATCH flight/:id
 req-body {}
 */
 async function updateFlight(req, res) {
     try {
         const flights = await FlightService.updateFlight(req.params.id, {
-             flightNumber : req.body.flightNumber,
+            flightNumber: req.body.flightNumber,
             airplaneID: req.body.airplaneID,
             departureAirportID: req.body.departureAirportID,
             arrivalAirportID: req.body.arrivalAirportID,
@@ -108,7 +106,7 @@ async function updateFlight(req, res) {
             departureTime: req.body.departureTime,
             price: req.body.price,
             boardingGate: req.body.boardingGate,
-            totalSeats : req.body.totalSeats
+            totalSeats: req.body.totalSeats
         });
         return res.status(StatusCodes.OK).json({
             success: true,
@@ -117,7 +115,7 @@ async function updateFlight(req, res) {
             error: {},
         });
     } catch (error) {
-        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+        return res.status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: 'Something went wrong while updating the Flight.',
             data: {},
@@ -126,9 +124,59 @@ async function updateFlight(req, res) {
     }
 }
 
+async function getFlight(req, res) {
+    try {
+        const flight = await FlightService.getFlight(req.params.id);
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Successfully fetched the Flight.',
+            data: flight,
+            error: {},
+        });
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({
+                success: false,
+                message: 'Something went wrong while fetching the Flight.',
+                data: {},
+                error: error.message,
+            });
+    }
+}
+
+async function updateSeats(req, res) {
+    try {
+        const flight = await FlightService.updateSeats({
+            flightID: req.params.id,
+            seats: req.body.seats,
+            decr: req.body.decr
+        });
+        return res
+            .status(StatusCodes.OK)
+            .json({
+                success: true,
+                message: 'Successfully updated the seats.',
+                data: flight,
+                error: {},
+            });
+    } catch (error) {
+        return res
+            .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+            .json({
+                success: false,
+                message: 'Something went wrong while updating seats.',
+                data: {},
+                error: error.message,
+            });
+    }
+}
+
 module.exports = {
     createFlight,
     deleteFlight,
     getAllFlights,
-    updateFlight
+    updateFlight,
+    getFlight,
+    updateSeats
 }
